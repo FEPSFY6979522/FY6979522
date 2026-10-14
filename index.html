@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Quantitative Trading | ENG0018</title>
+  <title>Evaluating three-day moving-average signals for quantitative trading decisions | ENG0018</title>
   <style>
     * { box-sizing: border-box; }
     body { margin: 0; background: #f3f5f7; color: #202c38; font-family: Calibri, Arial, sans-serif; line-height: 1.65; }
@@ -31,6 +31,7 @@
     #price-chart:not(:empty) { width: 100%; min-height: 320px; }
     figcaption { font-size: 0.95rem; }
     #references li { margin-bottom: 1rem; }
+    .reference-list { list-style: none; padding-left: 0; }
     .presentation-video { display: block; width: 100%; height: auto; background: #000; }
     button { padding: 0.65rem 1rem; background: #174b66; color: white; border: 2px solid #174b66; border-radius: 4px; font: inherit; cursor: pointer; }
     button:disabled { opacity: 0.65; cursor: wait; }
@@ -52,7 +53,7 @@
       <p class="module">ENG0018 Computer Laboratory 2026/27</p>
       <p>Student URN: 6979522</p>
       <hr>
-      <h1>Quantitative Trading: Understanding a Simple Moving-Average Strategy</h1>
+      <h1 id="article-title">Evaluating three-day moving-average signals for quantitative trading decisions</h1>
     </header>
 
     <nav aria-labelledby="contents-title">
@@ -70,15 +71,15 @@
     <main id="paper" tabindex="-1">
       <section id="abstract" aria-labelledby="abstract-title">
         <h2 id="abstract-title">Abstract</h2>
-        <p>This paper introduces quantitative trading through a simple numerical rule. A three-day moving average is calculated from invented closing prices and compared with each day's price. The example shows how a rule can produce consistent signals, but also why a signal is not a guarantee of profit. Trading costs, delayed information and changing market conditions must be considered before a strategy could be evaluated using real data.</p>
+        <p>A moving-average rule gives a clear answer about when to hold an asset, but that answer may not lead to a good trade. This paper examines a three-day rule using eight illustrative prices and compares historical research on trading signals with research on weaknesses in testing. The example shows how signals are calculated; it does not measure investment returns. Published findings give reasons to investigate moving-average strategies, but do not establish that this particular rule works today. Its usefulness depends on when trades occur, their costs and how the rule is tested.</p>
       </section>
 
       <section id="introduction" aria-labelledby="introduction-title">
         <h2 id="introduction-title">Introduction</h2>
         <div id="Introduction_InText">
-          <p>Quantitative trading uses numerical data and defined rules to guide trading decisions. Instead of deciding only from a personal impression, a trader can specify a calculation and apply the same decision rule repeatedly. This makes the method easier to explain and check, although the choice of rule still involves judgement.</p>
-          <p>A simple moving average (SMA) is the average price over a chosen number of periods. As a new price becomes available, the oldest price leaves the calculation. Fidelity describes moving averages as a way to smooth price data, while noting that smoothing introduces a delay relative to the original prices <a href="#ref-fidelity">[1]</a>.</p>
-          <p>The question explored here is: how can a simple numerical rule guide trading decisions, and what are its limitations? A three-day window keeps the arithmetic easy to follow. It is chosen for this explanation, not because it is proven to be suitable for real trading.</p>
+          <p>Quantitative trading uses numerical data and defined rules to guide decisions. These rules can be tested against historical prices, although good results can sometimes be misleading <a href="#ref-bailey">(Bailey et al., 2017)</a>. The important question is not just how a rule works, but whether there is a sound reason to act on it.</p>
+          <p>A simple moving average (SMA) is the average price over a chosen number of periods. As a new price becomes available, the oldest price leaves the calculation. Moving averages smooth price data, but this smoothing introduces a delay relative to the original prices <a href="#ref-fidelity">(Fidelity, no date)</a>.</p>
+          <p>This paper asks how far three-day moving-average signals can support trading decisions. Eight invented prices make the calculation easy to follow, while published research helps assess its usefulness. Three days is a convenient window for this explanation, rather than a choice shown to give the best results.</p>
         </div>
       </section>
 
@@ -86,19 +87,23 @@
         <h2 id="analysis-title">Analysis and discussion</h2>
         <div id="Analysis_InText">
           <h3>The calculation</h3>
-          <p>For a three-day SMA, add the latest three closing prices and divide the total by three. On day 3, the invented prices are £100, £102 and £104. Their average is (£100 + £102 + £104) ÷ 3 = £102. On day 4, the first price is dropped, giving (£102 + £104 + £103) ÷ 3 = £103. No three-day average is available on days 1 and 2.</p>
+          <p>For a three-day SMA, add the latest three closing prices and divide by three. Day 3 gives (£100 + £102 + £104) ÷ 3 = £102. Day 4 drops the oldest price, giving (£102 + £104 + £103) ÷ 3 = £103. The first two days lack enough observations.</p>
           <h3>A simple decision rule</h3>
-          <p>When the closing price is greater than its SMA, the rule signals a target of holding the asset. When the closing price is equal to or below the SMA, it signals staying out. “Hold” means buy if not already invested, or remain invested; “stay out” means sell if invested, or remain out. This example does not use borrowed money or betting on falling prices.</p>
-          <p>The signal is only known after that day's closing price is available. Any action would therefore occur later, at a price which could be different. Using information before it was available would introduce look-ahead bias, one of the backtesting problems highlighted by CFA Institute <a href="#ref-cfa">[2]</a>. The table describes signals, not completed trades, and does not calculate returns.</p>
+          <p>The rule says to hold the asset when its closing price is above the SMA, and stay out when it is equal to or below it. “Hold” means buy if not already invested, or remain invested. “Stay out” means sell if invested, or remain out. The example does not use borrowed money or positions that profit from falling prices.</p>
+          <p>The signal becomes available after the close, so any action occurs later, potentially at a different price. Testing a trade as though future information were already known introduces look-ahead bias <a href="#ref-cfa">(CFA Institute, 2026)</a>. The table shows signals, not completed trades or returns.</p>
           <h3>What the example shows</h3>
-          <p>Day 3 produces a hold signal, but day 4 produces a stay-out signal because its price equals the average. Day 7 produces another hold signal. The calculation gives a consistent answer, yet frequent changes of signal could lead to repeated trading. A numerical rule removes some uncertainty about how to decide; it does not remove uncertainty about what happens next.</p>
+          <p>Day 3 gives a hold signal, while day 4 gives a stay-out signal because the price equals the average. Day 7 gives another hold signal. Anyone applying the same rule gets the same answers. However, changes between holding and staying out could require several trades, and the rule cannot tell us what the next price will be.</p>
+          <h3>Historical evidence and its limits</h3>
+          <p>There is research suggesting that moving-average signals can contain useful information. A study of the Dow Jones index from 1897 to 1986 found higher returns after buy signals than after sell signals <a href="#ref-brock">(Brock et al., 1992)</a>. That gives a reason to study these rules, but it does not prove that this three-day example is effective. The researchers tested different strategies in a different period. The reported difference in returns also does not guarantee that a trader could make a profit after costs.</p>
           <h3>Limitations</h3>
-          <p>A moving average uses past prices and cannot predict unexpected news. Short windows react quickly, but may also respond to small price fluctuations. Longer windows smooth more of the variation but respond more slowly <a href="#ref-fidelity">[1]</a>. Neither choice guarantees that the next price movement will be favourable.</p>
-          <p>Real transactions can involve fees. The U.S. Securities and Exchange Commission explains that transaction fees are charged when investments are bought, sold or exchanged, reducing the amount left in a portfolio <a href="#ref-sec">[3]</a>. There can also be a gap between buying and selling prices, and execution may happen at a different price from the one expected. These effects can reduce any gains.</p>
-          <p>The eight invented prices below demonstrate arithmetic only: they are not evidence that the strategy works. A meaningful evaluation would require real data, realistic trading assumptions and separate data not used to choose the rule. Testing a strategy using historical data is called backtesting. CFA Institute explains that this aims to approximate real investing, while warning that historical conditions may not represent the future <a href="#ref-cfa">[2]</a>.</p>
-          <p>If a rule is later automated to place trades, checking its calculation is not enough. FINRA's guidance for U.S. trading firms identifies software testing, risk controls and continued monitoring as important safeguards <a href="#ref-finra">[4]</a>. This paper does not implement automated order placement, but the guidance shows why a simple signal should not be treated as a complete trading system.</p>
+          <p>A moving average uses past prices and cannot predict unexpected news. Short windows react quickly, but may also respond to small price fluctuations. Longer windows smooth more of the variation but respond more slowly <a href="#ref-fidelity">(Fidelity, no date)</a>. Neither choice guarantees that the next price movement will be favourable.</p>
+          <p>Transaction fees reduce the amount left in a portfolio <a href="#ref-sec">(U.S. Securities and Exchange Commission, 2014)</a>. Buying and selling prices can also differ, as can expected and actual execution prices. Frequent signal changes therefore matter: a small apparent advantage may not survive the costs of acting on it.</p>
+          <p>Testing on historical data is called backtesting. It approximates investing but cannot assume that past conditions represent the future <a href="#ref-cfa">(CFA Institute, 2026)</a>. Research on backtest overfitting shows how selecting the best-looking historical rule can fit chance patterns rather than a dependable relationship <a href="#ref-bailey">(Bailey et al., 2017)</a>. Keeping data aside is not sufficient if it influences later choices or many trials are ignored.</p>
+          <p>The two studies answer different questions. Brock and colleagues ask whether signals were linked to later returns; Bailey and colleagues ask whether choosing a rule from past results can mislead us. Their findings are therefore not a simple disagreement. To evaluate this rule further, it would need to be compared with simply holding the asset, using realistic costs and periods not used to choose the rule.</p>
+          <p>There is also a practical issue if trades are automated. Software testing, risk controls and ongoing monitoring are needed <a href="#ref-finra">(Financial Industry Regulatory Authority, 2015)</a>. A rule supported by research can still be implemented badly.</p>
         </div>
 
+        <p id="figure-discussion">Table 1 lists the closing prices, averages and signals. In Figure 1, the average changes less sharply than the price, but still follows its movement. The displays help check the calculation; they do not show the costs or returns from carrying out the trades.</p>
         <div class="table-wrap" role="region" aria-labelledby="prices-caption" tabindex="0">
           <table id="prices-table">
             <caption id="prices-caption">Table 1. Invented daily prices and three-day SMA</caption>
@@ -117,28 +122,30 @@
             </tbody>
           </table>
         </div>
-        <p class="muted">SMA shown to two decimals; signals use unrounded values.</p>
+        <p id="table-note" class="muted">SMA shown to two decimals; signals use unrounded values.</p>
         <figure>
           <button id="load-chart" type="button" hidden>Load Google chart</button>
           <p id="chart-status" role="status">Chart requires JavaScript. See Table 1.</p>
           <div id="price-chart" role="img" aria-label="Invented closing prices and three-day moving average; all values are provided in Table 1."></div>
-          <figcaption>Figure 1. Closing price and three-day SMA (illustrative data).</figcaption>
+          <figcaption id="chart-caption">Figure 1. Closing price and three-day SMA (illustrative data).</figcaption>
         </figure>
       </section>
 
       <section id="conclusion" aria-labelledby="conclusion-title">
         <h2 id="conclusion-title">Conclusion</h2>
-        <p>A moving-average rule is a straightforward introduction to quantitative trading because its inputs, calculation and decisions can be inspected. This example illustrates how signals are generated, rather than whether they make money. A consistent rule can still produce losses, so costs, risk and careful testing matter as much as the calculation itself.</p>
+        <p>A three-day moving average gives a consistent rule that is easy to check. Research gives reasons to investigate such signals, but it does not show that this example would make money today. The rule is useful for organising a decision, not sufficient for making one. Acting on it would need support from tests that account for timing, costs and the risks of choosing a rule that only looks good on past data.</p>
       </section>
 
       <section id="references" aria-labelledby="references-title">
-        <h2 id="references-title">References</h2>
-        <ol>
-          <li id="ref-fidelity">Fidelity (n.d.). <a href="https://www.fidelity.com/learning-center/trading-investing/technical-analysis/technical-indicator-guide/sma"><cite>Simple Moving Average (SMA)</cite></a>. Technical Indicator Guide. Accessed: 13 October 2026.</li>
-          <li id="ref-cfa">CFA Institute (2026). <a href="https://www.cfainstitute.org/insights/professional-learning/refresher-readings/2026/backtesting-and-simulation"><cite>Backtesting &amp; Simulation</cite></a>. CFA Program Level II, Portfolio Management. Public introduction and summary. Accessed: 13 October 2026.</li>
-          <li id="ref-sec">U.S. Securities and Exchange Commission (2014). <a href="https://www.sec.gov/oiea/investor-alerts-bulletins/investoralertsib_fees_expensespdf"><cite>How Fees and Expenses Affect Your Investment Portfolio</cite></a>. Investor Bulletin, 31 January. Accessed: 13 October 2026.</li>
-          <li id="ref-finra">Financial Industry Regulatory Authority (FINRA) (2015). <a href="https://www.finra.org/rules-guidance/notices/15-09"><cite>Guidance on Effective Supervision and Control Practices for Firms Engaging in Algorithmic Trading Strategies</cite></a>. Regulatory Notice 15-09, 26 March. Accessed: 13 October 2026.</li>
-        </ol>
+        <h2 id="references-title">Reference list</h2>
+        <ul class="reference-list">
+          <li id="ref-bailey">Bailey, D.H., Borwein, J.M., López de Prado, M. and Zhu, Q.J. (2017) ‘The probability of backtest overfitting’, <cite>The Journal of Computational Finance</cite>, 20(4), pp. 39–69. Available at: <a href="https://doi.org/10.21314/JCF.2016.322">https://doi.org/10.21314/JCF.2016.322</a> (Accessed: 13 October 2026).</li>
+          <li id="ref-brock">Brock, W., Lakonishok, J. and LeBaron, B. (1992) ‘Simple technical trading rules and the stochastic properties of stock returns’, <cite>The Journal of Finance</cite>, 47(5), pp. 1731–1764. Available at: <a href="https://doi.org/10.1111/j.1540-6261.1992.tb04681.x">https://doi.org/10.1111/j.1540-6261.1992.tb04681.x</a> (Accessed: 13 October 2026).</li>
+          <li id="ref-cfa">CFA Institute (2026) <cite>Backtesting &amp; simulation</cite>. CFA Program Level II, Portfolio Management, public introduction and summary. Available at: <a href="https://www.cfainstitute.org/insights/professional-learning/refresher-readings/2026/backtesting-and-simulation">https://www.cfainstitute.org/insights/professional-learning/refresher-readings/2026/backtesting-and-simulation</a> (Accessed: 13 October 2026).</li>
+          <li id="ref-fidelity">Fidelity (no date) <cite>Simple moving average (SMA)</cite>. Technical Indicator Guide. Available at: <a href="https://www.fidelity.com/learning-center/trading-investing/technical-analysis/technical-indicator-guide/sma">https://www.fidelity.com/learning-center/trading-investing/technical-analysis/technical-indicator-guide/sma</a> (Accessed: 13 October 2026).</li>
+          <li id="ref-finra">Financial Industry Regulatory Authority (2015) <cite>Guidance on effective supervision and control practices for firms engaging in algorithmic trading strategies</cite>. Regulatory Notice 15-09, 26 March. Available at: <a href="https://www.finra.org/rules-guidance/notices/15-09">https://www.finra.org/rules-guidance/notices/15-09</a> (Accessed: 13 October 2026).</li>
+          <li id="ref-sec">U.S. Securities and Exchange Commission (2014) <cite>How fees and expenses affect your investment portfolio</cite>. Investor Bulletin, 31 January. Available at: <a href="https://www.sec.gov/oiea/investor-alerts-bulletins/investoralertsib_fees_expensespdf">https://www.sec.gov/oiea/investor-alerts-bulletins/investoralertsib_fees_expensespdf</a> (Accessed: 13 October 2026).</li>
+        </ul>
       </section>
 
       <section id="presentation" aria-labelledby="presentation-title">
@@ -167,12 +174,19 @@
     function countWords(sectionId) {
       const section = document.getElementById(sectionId);
       if (!section) return 0;
-      const text = section.textContent.trim();
+      // innerText preserves word boundaries between table cells and block elements.
+      const text = (section.innerText ?? section.textContent).trim();
       return text ? text.split(/\s+/).length : 0;
     }
 
     function displayTotalWordCount() {
-      const total = countWords('Introduction_InText') + countWords('Analysis_InText');
+      // Assessment scope includes title, body headings, tables and figure captions.
+      // Abstract, reference list, navigation, presentation and widget text are excluded.
+      const sectionIds = [
+        'article-title', 'introduction', 'analysis-title', 'Analysis_InText',
+        'figure-discussion', 'prices-table', 'table-note', 'chart-caption', 'conclusion'
+      ];
+      const total = sectionIds.reduce((sum, id) => sum + countWords(id), 0);
       document.getElementById('totalWordCount').textContent = `Word count: ${total}`;
     }
 
@@ -280,6 +294,8 @@
       const verifyButton = document.getElementById('verify-update');
       verifyButton.hidden = false;
       verifyButton.addEventListener('click', getLastUpdatedTime);
+      // The supplied validation helper displays the timestamp on initial load too.
+      getLastUpdatedTime();
       const chartButton = document.getElementById('load-chart');
       chartButton.hidden = false;
       chartButton.addEventListener('click', loadPriceChart);
